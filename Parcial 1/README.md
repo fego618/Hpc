@@ -115,7 +115,7 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |1,69067  |	0,005297|
 
 #### promedio
-|   CPU    |    GPU    ||
+|   CPU    |    GPU    |
 |----------|-----------|
 |2,0370468 |	0,0053444|
 
