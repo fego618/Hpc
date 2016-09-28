@@ -1,6 +1,6 @@
 # PARCIAL 1 - HIGH PERFORMANCE COMPUTING
 
-Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  de diferentes dimensiones, las dimensiones con las que trabajamos fueron para la matriz  A(m*n) y B(n*y), se realizó un algoritmo que realizaba la multiplicación de matrices en el host, es decir de forma secuencial y se implementó otro que realiza la multiplicación de matrices aprovechando el paralelismo que nos proporcionan las GPU usando memoria compartida haciendo uso del concepto de TILES, posteriormente se tomaron tiempos sobre diferentes dimensiones de las matrices y de los TILES sacando promedios para obtener una medida más exacta y así comprobar el rendimiento de ambos algoritmos junto con su factor de aceleración. A continuacion las tablas con su respectiva informacion
+Se realizó la implementación en ```CUDA c``` para la multiplicación de matrices  de diferentes dimensiones, las dimensiones con las que trabajamos fueron para la matriz  ```A(MxN) y B(NxY) ```, se realizó un algoritmo que realizaba la multiplicación de matrices en el host, es decir de forma secuencial y se implementó otro que realiza la multiplicación de matrices aprovechando el paralelismo que nos proporcionan las GPU usando memoria compartida haciendo uso del concepto de TILES, posteriormente se tomaron tiempos sobre diferentes dimensiones de las matrices y de los TILES sacando promedios para obtener una medida más exacta y así comprobar el rendimiento de ambos algoritmos junto con su factor de aceleración. A continuacion las tablas con su respectiva informacion
 
 
 ## Tiempos de la primera multiplicacion de matrices
@@ -27,7 +27,7 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |0,000028 |	0,000067  |
 
 
-#### promedio
+### promedio
 
 |CPU     | GPU       |
 |--------| ----------|
@@ -56,7 +56,7 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |0,00406  |	0,000124|
 |0,007605 |	0,000125|
 
-#### promedio
+### promedio
 |   CPU    |    GPU    |
 |--------- |-----------|
 |0,0047075 |	0,0001252|
@@ -85,7 +85,7 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |0,077322 |	0,000584|
 |0,077331 |	0,000582|
 
-#### promedio
+### promedio
 
 |   CPU    |     GPU   |
 |----------|-----------|
@@ -114,7 +114,7 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |1,721134 |	0,006358|
 |1,69067  |	0,005297|
 
-#### promedio
+### promedio
 |   CPU    |    GPU    |
 |----------|-----------|
 |2,0370468 |	0,0053444|
@@ -143,7 +143,27 @@ Se realizó la implementación en 'CUDA c' para la multiplicación de matrices  
 |14,314566 |	0,022895|
 |14,527891 |	0,023025|
 
-#### promedio
+### promedio
 |    CPU    |    GPU     |
 |-----------|------------|
 |13,7928968 |	0,0230487  |
+
+## Comparación de tiempos y calculo de aceleración.
+
+|N° prueba	| tiempo  CPU |	 tiempo  GPU |	Aceleracion |
+|-----------|-------------|--------------|--------------|
+|     1     |	0,000047    |	0,0000663	   |0,708898944   |
+|     2     |	0,0047075	  |0,0001252	   |37,59984026   |
+|     3     |	0,0751756 	|0,0005857	   |128,3517159   |
+|     4     |	2,0370468	  |0,0053444	   |381,1553776   |
+|     5     |	13,7928968 	|0,0230487	   |598,4240673   |
+
+## Grafica de tiempos
+
+### Aceleracion
+![Aceleracion](img/aceleracion.jpg "Aceleracion")
+
+## Conclusiones
+
+* Mientras que las dimensiones de las matrices sean pequeñas es mejor realizar la multiplicacion de matrices en la CPU, ya que el costo de enviar datos a la GPU es alto, pero cuando aumenta el tamaño considerablemente es mucho mejor usar GPU
+* s
