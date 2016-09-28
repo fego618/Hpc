@@ -29,9 +29,9 @@ CPU | GPU
 
 #### promedio
 
-CPU | GPU
--- | --
-0,000047 |	0,0000663
+|CPU     | GPU       |
+|--------| ----------|
+|0,000047|	0,0000663|
 
 ## Tiempos de la segunda multiplicacion de matrices
 
