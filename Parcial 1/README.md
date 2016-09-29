@@ -160,10 +160,13 @@ Se realizó la implementación en ```CUDA c``` para la multiplicación de matric
 
 ## Grafica de tiempos
 
-### Aceleracion
-![Aceleracion](img/aceleracion.jpg "Aceleracion")
+![alt tag](img/tiempos.jpg)
+### Grafica Aceleracion
+![alt tag](img/aceleracion.jpg)
+
 
 ## Conclusiones
 
 * Mientras que las dimensiones de las matrices sean pequeñas es mejor realizar la multiplicacion de matrices en la CPU, ya que el costo de enviar datos a la GPU es alto, pero cuando aumenta el tamaño considerablemente es mucho mejor usar GPU
-* s
+* Por lo anterior vemos entonces que La transferencia de datos a traves del PCI Express representa la mayor parte del consumo de tiempo en la implementacion paralela con GPU.
+*
