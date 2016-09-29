@@ -171,3 +171,7 @@ Se realizó la implementación en ```CUDA c``` para la multiplicación de matric
 * Por lo anterior vemos entonces que La transferencia de datos a traves del PCI Express representa la mayor parte del consumo de tiempo en la implementacion paralela con GPU.
 * Entre mas operaciones puedan ser aceleradas usando GPU y mientras se pueda transferir la menor cantidad de memoria posible, mejor va ser el desempeño del algoritmo
 * el factor de aceleración a medida de que las dimensiones de las matrices a multiplicar aumenten tiende a tener un comportamiento lineal.
+
+***
+###### Farley Estiven Gonzalez Osorio
+###### Robert Sneyder Garcia Moreno
