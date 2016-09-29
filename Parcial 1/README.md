@@ -161,7 +161,7 @@ Se realizó la implementación en ```CUDA c``` para la multiplicación de matric
 ## Grafica de tiempos
 
 ![alt tag](img/tiempos.JPG)
-### Grafica Aceleracion
+### Grafica factor aceleracion
 ![alt tag](img/aceleracion.JPG)
 
 
