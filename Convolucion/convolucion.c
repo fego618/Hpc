@@ -3,39 +3,30 @@
 #include <time.h>
 
 void inicializarVec(int *vec , int t){
-  for(int i = 0; i < t ; i++){
+  for(int i = 0; i < t ; i++)
     vec[i] = i + 1;
-  }
 }
 
 void convolucionCPU(int *h_n,int *h_mascara,int *h_r,int n, int mascara, int r){
-	int mitadMascara= (mascara/2) + 1;
-	printf("mitad = %d \n",mitadMascara );
+	int mitadMascara= (mascara/2);
 	for(int i=0;i<n;i++){
 		int p=0;// almacena los valores temporales
-		int k=i; // me itera sobre h_n
-		for (int j = mitadMascara - 1; j < mascara; j++)
-		{	printf("operacion 1 = %d * %d \n",h_n[k],h_mascara[j]);
-			p += h_n[k]*h_mascara[j];
-			k++;
+    int k= i - mitadMascara;
+		for (int j =0; j < mascara; j++){
+      if(k < n  && k >= 0){
+        p += h_n[k]*h_mascara[j];
+      }
+      else
+        p+=0;
+      k++;
 		}
-		k=mitadMascara-2;
-		for (int j = mitadMascara - 2; j >= 0; j--)
-		{	
-			printf("operacion 2 = %d * %d \n",h_n[k],h_mascara[j]);
-      printf("valor de k = %d \n",k );
-			p += h_n[k]*h_mascara[j];
-			k--;
-		}
-	h_r[i]=p;
+    h_r[i]=p;
 	}
 }
 
 void imprimirVec(int *h_r,int n){
 	for (int i = 0; i < n; i++)
-	{
 		printf(" %d ",h_r[i]);
-	}
 	printf("\n");
 }
 
