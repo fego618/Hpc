@@ -23,6 +23,28 @@ __global__ void  convolutionGPUkernel_2D(int *M, int *mascara,int *resultado,int
   }
 }
 
+void  convolutionCPU2D(int *M, int *mascara,int *resultado,int m, int n, int widthM){
+  int j = blockIdx.x*blockDim.x + threadIdx.x;
+  int i = blockIdx.y*blockDim.y + threadIdx.y;
+  for(int i = 0; i<m;i++){
+    for(int j=0; j<n ; j++){
+      int p = 0;
+      int start_j = j - (widthM/2);
+      int start_i = i - (widthM/2);
+      for (int i = 0; i < widthM ; i++) {
+        for (int j = 0; j < widthM; j++) {
+          int curRow = start_i + i;
+          int curCol = start_j + j;
+          if(curRow > -1 && curRow < m && curCol > -1 && curCol < n){
+            p += M[curRow*m + curCol]*mascara[i*widthM + j];
+          }
+        }
+      }
+      resultado[row*n + j] = p;
+    }
+  }
+}
+
 void inicializarMat(int *Ma , int m, int n){
   for(int i = 0; i <= m*n +1; i++){
     Ma[i] = 1;
