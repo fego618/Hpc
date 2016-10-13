@@ -12,6 +12,7 @@ using namespace std;
 #define CHANNELS 3
 
 __global__ void  convolutionSobelGPUkernel(unsigned char *M, char *d_Gx, char *d_Gy, unsigned char *resultado,int m, int n, int widthM){
+
   int col = blockIdx.x*blockDim.x + threadIdx.x;
   int row = blockIdx.y*blockDim.y + threadIdx.y;
 
@@ -19,7 +20,6 @@ __global__ void  convolutionSobelGPUkernel(unsigned char *M, char *d_Gx, char *d
     int Gx = 0, Gy = 0;
     int start_col = col - (widthM/2);
     int start_row = row - (widthM/2);
-
     for (int i = 0; i < widthM ; i++) {
       for (int j = 0; j < widthM; j++) {
         int curRow = start_row + i;
@@ -52,6 +52,9 @@ __global__ void  convolutionSobelGPUkernel(unsigned char *M, char *d_Gx, char *d
 
 int main(int argc, char **argv) {
 
+  clock_t startCuda, endCuda,startOpenCV, endOpenCV;
+  double cuda_time_used,openCV_time_used;
+
   Mat img;
   img = imread("./inputs/img4.jpg", CV_LOAD_IMAGE_COLOR); // cargamos img
   Size s = img.size();
@@ -65,8 +68,11 @@ int main(int argc, char **argv) {
   cvtColor(img, grayImg, CV_BGR2GRAY);
   Mat grad_x, abs_grad_x;
   //aplicamos el filtro de sobel con openCV
+  startOpenCV = clock();
   Sobel(grayImg, grad_x, CV_8UC1, 1, 0, 3, 1, 0, BORDER_DEFAULT);
   convertScaleAbs(grad_x, abs_grad_x);
+  endOpenCV = clock();
+  openCV_time_used = ((double) (endOpenCV - startOpenCV)) / CLOCKS_PER_SEC;
 
 	unsigned char *h_imgSobel;
   h_imgSobel = (unsigned char *)malloc(sizeof(unsigned char) * s.width * s.height);
@@ -74,11 +80,13 @@ int main(int argc, char **argv) {
   char *d_Gx,*d_Gy;
   unsigned char *d_img,*d_imgSobel;
 
+  
   cudaMalloc((void**)&d_Gx,(maskwidth*maskwidth)*sizeof(char));
   cudaMalloc((void**)&d_Gy,(maskwidth*maskwidth)*sizeof(char));
   cudaMalloc((void**)&d_img,(s.width*s.height)*sizeof(unsigned char));
   cudaMalloc((void**)&d_imgSobel,(s.width*s.height)*sizeof(unsigned char));
 
+  startCuda = clock();
   cudaMemcpy(d_Gx,h_Gx,(maskwidth*maskwidth)*sizeof(char),cudaMemcpyHostToDevice);
   cudaMemcpy(d_Gy,h_Gy,(maskwidth*maskwidth)*sizeof(char),cudaMemcpyHostToDevice);
   cudaMemcpy(d_img,grayImg.data,(s.width*s.height)*sizeof(unsigned char),cudaMemcpyHostToDevice);
@@ -90,11 +98,16 @@ int main(int argc, char **argv) {
   convolutionSobelGPUkernel<<<DimGrid,DimBlock>>>(d_img,d_Gx,d_Gy,d_imgSobel,s.height,s.width,maskwidth);
 
   cudaMemcpy(h_imgSobel,d_imgSobel,(s.width*s.height)*sizeof(unsigned char),cudaMemcpyDeviceToHost);
+  endCuda = clock();
+  cuda_time_used = ((double) (endCuda - startCuda)) / CLOCKS_PER_SEC;
 
   // Generando la imagen de salida
   Mat imgSobelCuda;
   imgSobelCuda.create(s.height, s.width, CV_8UC1);
   imgSobelCuda.data = h_imgSobel;
+
+  printf("Tiempo openCV : %.10f\n", openCV_time_used);
+  printf("Tiempo cuda : %.10f\n", cuda_time_used);
 
 
   // Guardando la imagen generada por CUDA
@@ -102,6 +115,6 @@ int main(int argc, char **argv) {
 
   // Guardando la imagen generada por openCV
   //imwrite("./outputs/1088318976.png", abs_grad_x);
-  cout << "La imagen esta lista." << std::endl;
+
   return 0;
 }
