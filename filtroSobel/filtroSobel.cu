@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cuda.h>
-#include <cv.h>
+//#include <cv.h>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -56,7 +57,7 @@ int main(int argc, char **argv) {
   double cuda_time_used,openCV_time_used;
 
   Mat img;
-  img = imread("./inputs/img4.jpg", CV_LOAD_IMAGE_COLOR); // cargamos img
+  img = imread("img4.jpg", CV_LOAD_IMAGE_COLOR); // cargamos img
   Size s = img.size();
 
   // mascaras para el filtro de Sobel
@@ -111,7 +112,7 @@ int main(int argc, char **argv) {
 
 
   // Guardando la imagen generada por CUDA
-  imwrite("./outputs/1088310731.png", imgSobelCuda);
+  imwrite("1088310731.png", imgSobelCuda);
 
   // Guardando la imagen generada por openCV
   //imwrite("./outputs/1088318976.png", abs_grad_x);
