@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define sizeVec 1000000                 /* size vec A,B,C */
+#define sizeVec 100000                 /* size vec A,B,C */
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
@@ -40,9 +40,9 @@ numworkers = numtasks-1;
 	    printf("mpi_mm has started with %d tasks.\n",numtasks);
 	    printf("Initializing arrays...\n");
 	    for (i=0; i<sizeVec; i++){
-	        a[i]= i;
-			b[i]= i+1;
-		}
+	        a[i]= 1;
+		b[i]= 1;
+	    }
 
 
       /* Send vector data to the worker tasks */
@@ -75,10 +75,12 @@ numworkers = numtasks-1;
       /* Print results */
       printf("******************************************************\n");
       printf("Result Vector:\n");
+      /*
       for (i=0; i<sizeVec; i++)
       {
-         printf(" %.2f ", c[i]);
+         printf(" %.2f \n", c[i]);
       }
+      */
       printf("\n******************************************************\n");
       printf ("Done.\n");
    }
