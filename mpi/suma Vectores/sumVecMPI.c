@@ -9,39 +9,39 @@
 
 int main (int argc, char *argv[])
 {
-int	numtasks,              /* number of tasks in partition */
-	taskid,                /* a task identifier */
-	numworkers,            /* number of worker tasks */
-	source,                /* task id of message source */
-	dest,                  /* task id of message destination */
-	mtype,                 /* message type */
-	nelements,                  /* nelements of matrix A sent to each worker */
-	averow, extra, offset, /* used to determine nelements sent to each worker */
-	i, j, k, rc;           /* misc */
-float	a[sizeVec],
-	b[sizeVec],
-	c[sizeVec];           /* result vector C */
-MPI_Status status;
+	int	numtasks,              /* number of tasks in partition */
+			taskid,                /* a task identifier */
+			numworkers,            /* number of worker tasks */
+			source,                /* task id of message source */
+			dest,                  /* task id of message destination */
+			mtype,                 /* message type */
+			nelements,                  /* nelements of matrix A sent to each worker */
+			averow, extra, offset, /* used to determine nelements sent to each worker */
+			i, j, k, rc;           /* misc */
+	float	a[sizeVec],
+			b[sizeVec],
+			c[sizeVec];           /* result vector C */
+	MPI_Status status;
 
-MPI_Init(&argc,&argv);
-MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
-MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
-if (numtasks < 2 ) {
-  printf("Need at least two MPI tasks. Quitting...\n");
-  MPI_Abort(MPI_COMM_WORLD, rc);
-  exit(1);
-  }
-numworkers = numtasks-1;
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
+	MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
+	if (numtasks < 2 ) {
+		printf("Need at least two MPI tasks. Quitting...\n");
+	  MPI_Abort(MPI_COMM_WORLD, rc);
+	  exit(1);
+	}
+	numworkers = numtasks-1;
 
 
 /**************************** master task ************************************/
    if (taskid == MASTER)
    {
-	    printf("mpi_mm has started with %d tasks.\n",numtasks);
+		 	printf("mpi_mm has started with %d tasks.\n",numtasks);
 	    printf("Initializing arrays...\n");
 	    for (i=0; i<sizeVec; i++){
 	        a[i]= 1;
-		b[i]= 1;
+					b[i]= 1;
 	    }
 
 
