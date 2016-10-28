@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define sizeVec 100000                 /* size vec A,B,C */
+#define sizeVec 1000000                 /* size vec A,B,C */
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
@@ -18,9 +18,8 @@ int main (int argc, char *argv[])
 			nelements,                  /* nelements of matrix A sent to each worker */
 			averow, extra, offset, /* used to determine nelements sent to each worker */
 			i, j, k, rc;           /* misc */
-	float	a[sizeVec],
-			b[sizeVec],
-			c[sizeVec];           /* result vector C */
+	float	*a,*b, *c; 
+
 	MPI_Status status;
 
 	MPI_Init(&argc,&argv);
@@ -32,16 +31,19 @@ int main (int argc, char *argv[])
 	  exit(1);
 	}
 	numworkers = numtasks-1;
+	a =  (float*)malloc(sizeVec*sizeof(float));
+	b = (float*)malloc(sizeVec*sizeof(float));
+	c = (float*)malloc(sizeVec*sizeof(float));
 
 
 /**************************** master task ************************************/
    if (taskid == MASTER)
    {
-		 	printf("mpi_mm has started with %d tasks.\n",numtasks);
+	    printf("mpi_mm has started with %d tasks.\n",numtasks);
 	    printf("Initializing arrays...\n");
 	    for (i=0; i<sizeVec; i++){
-	        a[i]= 1;
-					b[i]= 1;
+	        a[i]= i;
+		b[i]= i+2;
 	    }
 
 
@@ -75,12 +77,12 @@ int main (int argc, char *argv[])
       /* Print results */
       printf("******************************************************\n");
       printf("Result Vector:\n");
-      /*
+      
       for (i=0; i<sizeVec; i++)
       {
          printf(" %.2f \n", c[i]);
       }
-      */
+      
       printf("\n******************************************************\n");
       printf ("Done.\n");
    }
@@ -92,16 +94,19 @@ int main (int argc, char *argv[])
 	    mtype = FROM_MASTER;
 	    MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
 	    MPI_Recv(&nelements, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
-	    MPI_Recv(&a, nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
-	    MPI_Recv(&b, nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
+	    MPI_Recv(&a[offset], nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
+	    MPI_Recv(&b[offset], nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
 
-	    for (k=0; k<nelements; k++)
+	    for (k=offset; k<sizeVec; k++)
 	    	c[k]=a[k]+b[k];
 
 	    mtype = FROM_WORKER;
 	    MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
 	    MPI_Send(&nelements, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
-	    MPI_Send(&c, nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD);
+	    MPI_Send(&c[offset], nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD);
    	}
    	MPI_Finalize();
+	free(a);
+	free(b);
+	free(c);
 }
