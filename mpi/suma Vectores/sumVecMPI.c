@@ -1,6 +1,7 @@
 #include "mpi.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define sizeVec 1000000                 /* size vec A,B,C */
 #define MASTER 0               /* taskid of first task */
@@ -35,7 +36,9 @@ int main (int argc, char *argv[])
 	b = (float*)malloc(sizeVec*sizeof(float));
 	c = (float*)malloc(sizeVec*sizeof(float));
 
-
+	clock_t start,end;
+	double mpi_time;
+	start = clock();
 /**************************** master task ************************************/
    if (taskid == MASTER)
    {
@@ -74,6 +77,9 @@ int main (int argc, char *argv[])
          printf("Received results from task %d\n",source);
       }
 
+      end = clock();
+      mpi_time = ((double) (end - start)) / CLOCKS_PER_SEC;
+
       /* Print results */
       printf("******************************************************\n");
       printf("Result Vector:\n");
@@ -84,6 +90,7 @@ int main (int argc, char *argv[])
       }
       
       printf("\n******************************************************\n");
+      printf("Tiempo suma vectores MPI : %.10f\n", mpi_time);
       printf ("Done.\n");
    }
 
@@ -105,7 +112,8 @@ int main (int argc, char *argv[])
 	    MPI_Send(&nelements, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
 	    MPI_Send(&c[offset], nelements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD);
    	}
-   	MPI_Finalize();
+
+	MPI_Finalize();
 	free(a);
 	free(b);
 	free(c);
