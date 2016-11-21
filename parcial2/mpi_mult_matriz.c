@@ -3,13 +3,31 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define sizeVec 1000000
+void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COLA, int COLB);
+
 #define ROWA 100
 #define COLA 100
 #define COLB 50
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
+
+
+void mpi_mult_matriz(double *a, double *b,double *c, int ARows,int ACols, int BCols){
+
+double multResult;
+
+  for(k=0;k<BCols;k++){
+     for(i=0;i<ARows;i++){
+        multResult= 0;
+        for(j=0;j<ACols;j++){
+           multResult+=a[ACols*i+j]*b[j*BCols+i];
+        }
+        c[i*BCols+k]= multResult;
+     }
+  }
+}
+
 
 int main (int argc, char *argv[])
 {
@@ -131,7 +149,7 @@ int main (int argc, char *argv[])
        MPI_Recv(matBuff, nElements, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
        MPI_Recv(matBuffB, COLA*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
 
-
+/*
       for(k=0;k<COLB;k++){
          for(i=0;i<nRows;i++){
             multResult= 0.0;
@@ -142,7 +160,8 @@ int main (int argc, char *argv[])
             matBuffC[i*COLB+k]= multResult;
          }
       }
-
+*/
+      mpi_mult_matriz(matBuff,matBuffB,matBuffC,nRows,COLA,COLB);
 
        mtype = FROM_WORKER;
        MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
