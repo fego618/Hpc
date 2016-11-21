@@ -6,7 +6,7 @@
 #define sizeVec 1000000
 #define ROWA 100
 #define COLA 100
-#define COLB 50            
+#define COLB 50
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
@@ -22,7 +22,7 @@ int main (int argc, char *argv[])
          nRows,                  /* nRows of matrix A sent to each worker */
          averow, extra, offset,nElements, /* used to determine nRows sent to each worker */
          i, j, k, rc;           /* misc */
-   float *a,*b, *c, multResult; 
+   double *a,*b, *c, multResult;
 
 
    MPI_Status status;
@@ -44,12 +44,12 @@ int main (int argc, char *argv[])
    if (taskid == MASTER)
    {
 
-       a = (float*)malloc(COLA*ROWA*sizeof(float));
- 	b = (float*)malloc(COLA*COLB*sizeof(float));
-	c = (float*)malloc(ROWA*COLB*sizeof(float));
+       a = (double*)malloc(COLA*ROWA*sizeof(double));
+ 	b = (double*)malloc(COLA*COLB*sizeof(double));
+	c = (double*)malloc(ROWA*COLB*sizeof(double));
        printf("mpi_mm has started with %d tasks.\n",numtasks);
        printf("Initializing arrays...\n");
-   
+
        for (i=0; i<ROWA*COLA; i++){
            a[i]= 1;
        }
@@ -75,9 +75,9 @@ int main (int argc, char *argv[])
 
 		 MPI_Send(&nElements, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
 
-         MPI_Send(&a[offset*COLA], nElements, MPI_FLOAT, dest, mtype, MPI_COMM_WORLD);
+         MPI_Send(&a[offset*COLA], nElements, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
 
-         MPI_Send(b, COLA*COLB, MPI_FLOAT, dest, mtype, MPI_COMM_WORLD);
+         MPI_Send(b, COLA*COLB, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
          offset = offset + nRows;
 }
 
@@ -88,14 +88,14 @@ int main (int argc, char *argv[])
          source = i;
          MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&nRows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset*COLB], nRows*COLB, MPI_FLOAT, source, mtype, MPI_COMM_WORLD, &status);
+         MPI_Recv(&c[offset*COLB], nRows*COLB, MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
          printf("Received results from task %d\n",source);
       }
 
       end = clock();
       mpi_time = ((double) (end - start)) / CLOCKS_PER_SEC;
-    
-    //   Print results 
+
+    //   Print results
       printf("******************************************************\n");
       printf("Result Vector:\n");
 
@@ -124,12 +124,12 @@ int main (int argc, char *argv[])
        MPI_Recv(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
        MPI_Recv(&nRows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
        MPI_Recv(&nElements, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
-	float *matBuffB = (float*)malloc(COLA*COLB*sizeof(float));
-	float *matBuffC = (float*)malloc(nRows*COLB*sizeof(float));
-       float *matBuff= (float*)malloc(nElements*sizeof(float));
+	double *matBuffB = (double*)malloc(COLA*COLB*sizeof(double));
+	double *matBuffC = (double*)malloc(nRows*COLB*sizeof(double));
+       double *matBuff= (double*)malloc(nElements*sizeof(double));
 
-       MPI_Recv(matBuff, nElements, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
-       MPI_Recv(matBuffB, COLA*COLB, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD, &status);
+       MPI_Recv(matBuff, nElements, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
+       MPI_Recv(matBuffB, COLA*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
 
 
       for(k=0;k<COLB;k++){
@@ -147,7 +147,7 @@ int main (int argc, char *argv[])
        mtype = FROM_WORKER;
        MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
        MPI_Send(&nRows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
-       MPI_Send(matBuffC, nRows*COLB, MPI_FLOAT, MASTER, mtype, MPI_COMM_WORLD);
+       MPI_Send(matBuffC, nRows*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD);
 	free(matBuff);
 	free(matBuffB);
 	free(matBuffC);
