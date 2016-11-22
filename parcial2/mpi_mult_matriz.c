@@ -4,11 +4,11 @@
 #include <time.h>
 
 //cuda = 0 MPI = 1
-#define CudaOrMPI 0
+#define CudaOrMPI 1
 
-#define ROWA 100
-#define COLA 100
-#define COLB 50
+#define ROWA 10000
+#define COLA 10000
+#define COLB 10000
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
@@ -28,7 +28,7 @@ double multResult;
   }
 }
 
-bool compare(double *MPI, double *CUDA, int rows, int cols) {
+bool compareWidth(double *MPI, double *CUDA, int rows, int cols) {
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       if (MPI[i * cols + j] != CUDA[i * cols + j])
@@ -105,7 +105,6 @@ int main (int argc, char *argv[])
       for (dest=1; dest<=numworkers; dest++)
       {
          nRows = (dest <= extra) ? averow+1 : averow;
-         printf("Sending %d nRows to task %d offset=%d\n",nRows,dest,offset);
          MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
          MPI_Send(&nRows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
 
@@ -127,13 +126,12 @@ int main (int argc, char *argv[])
          MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&nRows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
          MPI_Recv(&c[offset*COLB], nRows*COLB, MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
-         printf("Received results from task %d\n",source);
       }
 
       end = clock();
       mpi_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    //   Print results
+     /*
       printf("******************************************************\n");
       for (i=0; i<ROWA; i++)
       {
@@ -142,6 +140,7 @@ int main (int argc, char *argv[])
          printf(" %.2f ", c[(i*COLB)+j]);
 	       }
       }
+	*/
       printf("\n******************************************************\n");
       if(CudaOrMPI == 0){
         printf("Tiempo suma matrices CUDA : %.10f\n", mpi_time);
@@ -155,7 +154,6 @@ int main (int argc, char *argv[])
       }else{
         printf ("ERROR:  Failed Processing  .\n");
       }
-      printf ("Done.\n");
 
 	free(a);
 	free(b);
