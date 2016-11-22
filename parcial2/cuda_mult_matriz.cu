@@ -33,7 +33,7 @@ void cuda_mult_matriz(double *h_a, double *h_b, double *h_c, int ROWS, int COLA,
 	cudaMemcpy(d_b,h_b,sizeB * sizeof(double), cudaMemcpyHostToDevice);
 
 	dim3 dimBlock(BLOCKSIZE, BLOCKSIZE, 1);
-	dim3 dimGrid((ROWS / BLOCKSIZE) + 1, (COLB / BLOCKSIZE) + 1);
+	dim3 dimGrid((COLB / BLOCKSIZE) + 1, (ROWS / BLOCKSIZE) + 1,1);
 
 	kernelMultMat<<< dimGrid, dimBlock >>>(d_a, d_b, d_c, ROWS, COLA, COLB);
 	cudaMemcpy(h_c, d_c, sizeC*sizeof(double),cudaMemcpyDeviceToHost);
