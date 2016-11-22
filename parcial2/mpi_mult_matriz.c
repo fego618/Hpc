@@ -17,10 +17,10 @@ void mpi_mult_matriz(double *a, double *b,double *c, int ARows,int ACols, int BC
 
 double multResult;
 
-  for(k=0;k<BCols;k++){
-     for(i=0;i<ARows;i++){
+  for(int k=0;k<BCols;k++){
+     for(int i=0;i<ARows;i++){
         multResult= 0;
-        for(j=0;j<ACols;j++){
+        for(int j=0;j<ACols;j++){
            multResult+=a[ACols*i+j]*b[j*BCols+i];
         }
         c[i*BCols+k]= multResult;
