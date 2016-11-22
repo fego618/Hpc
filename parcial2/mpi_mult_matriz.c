@@ -10,7 +10,7 @@
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
 
-void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COLA, int COLB);
+void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B);
 
 void mpi_mult_matriz(double *a, double *b,double *c, int ARows,int ACols, int BCols){
 
