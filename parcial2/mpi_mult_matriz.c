@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
    MPI_Init(&argc,&argv);
    MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
    MPI_Comm_size(MPI_COMM_WORLD,&numtasks);
-   if (numtasks < 2 ) {
+   if (numtasks < 1 ) {
       printf("Need at least two MPI tasks. Quitting...\n");
      MPI_Abort(MPI_COMM_WORLD, rc);
      exit(1);
@@ -99,6 +99,7 @@ int main (int argc, char *argv[])
        
       start = clock();
       if(numworkers ==0){
+	printf("trabajando con un solo nodo \n");
           if(CudaOrMPI == 0){
             cuda_mult_matriz(a,b,c,ROWA,COLA,COLB);
           }else if(CudaOrMPI == 1){
