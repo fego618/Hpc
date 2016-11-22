@@ -143,23 +143,22 @@ int main (int argc, char *argv[])
        MPI_Recv(&nElements, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD, &status);
        double *matBuffA= (double*)malloc(nElements*sizeof(double));
 	     double *matBuffB = (double*)malloc(COLA*COLB*sizeof(double));
-	     double *matBuffC_mpi = (double*)malloc(nRows*COLB*sizeof(double));
-       double *matBuffC_cuda = (double*)malloc(nRows*COLB*sizeof(double));
-       
+	     double *matBuffC = (double*)malloc(nRows*COLB*sizeof(double));
+
 
       MPI_Recv(matBuffA, nElements, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
        MPI_Recv(matBuffB, COLA*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
 
-      mpi_mult_matriz(matBuffA,matBuffB,matBuffC_mpi,nRows,COLA,COLB);
-      cuda_mult_matriz(matBuffA,matBuffB,matBuffC_cuda,nRows,COLA,COLB);
+      //mpi_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+      cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
 
        mtype = FROM_WORKER;
        MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
        MPI_Send(&nRows, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
-       MPI_Send(matBuffC_mpi, nRows*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD);
+       MPI_Send(matBuffC, nRows*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD);
 	     free(matBuffA);
 	     free(matBuffB);
-	     free(matBuffC_mpi);
+	     free(matBuffC);
 }
 
    MPI_Finalize();
