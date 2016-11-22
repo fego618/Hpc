@@ -6,9 +6,9 @@
 //cuda = 0 MPI = 1
 #define CudaOrMPI 1
 
-#define ROWA 10000
-#define COLA 10000
-#define COLB 10000
+#define ROWA 17000
+#define COLA 17000
+#define COLB 17000
 #define MASTER 0               /* taskid of first task */
 #define FROM_MASTER 1          /* setting a message type */
 #define FROM_WORKER 2          /* setting a message type */
@@ -77,14 +77,15 @@ int main (int argc, char *argv[])
 
    clock_t start,end;
    double mpi_time;
-   start = clock();
+   
+
 /**************************** master task ************************************/
    if (taskid == MASTER)
    {
 
        a = (double*)malloc(COLA*ROWA*sizeof(double));
- 	b = (double*)malloc(COLA*COLB*sizeof(double));
-	c = (double*)malloc(ROWA*COLB*sizeof(double));
+ 	     b = (double*)malloc(COLA*COLB*sizeof(double));
+	     c = (double*)malloc(ROWA*COLB*sizeof(double));
        printf("mpi_mm has started with %d tasks.\n",numtasks);
        printf("Initializing arrays...\n");
 
@@ -95,39 +96,49 @@ int main (int argc, char *argv[])
        for (i=0; i<COLB*COLA; i++){
            b[i]= 1;
        }
+       
+      start = clock();
+      if(numworkers ==0){
+          if(CudaOrMPI == 0){
+            cuda_mult_matriz(a,b,c,ROWA,COLA,COLB);
+          }else if(CudaOrMPI == 1){
+            mpi_mult_matriz(a,b,c,ROWA,COLA,COLB);
+          }else{
+            printf("Error funcion no definida \n");
+          }
+      }else{
 
+        /* Send vector data to the worker tasks */
+        averow = ROWA/numworkers;
+        extra = ROWA%numworkers;
+        offset = 0;
+        mtype = FROM_MASTER;
+        for (dest=1; dest<=numworkers; dest++)
+        {
+           nRows = (dest <= extra) ? averow+1 : averow;
+           MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
+           MPI_Send(&nRows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
 
-      /* Send vector data to the worker tasks */
-      averow = ROWA/numworkers;
-      extra = ROWA%numworkers;
-      offset = 0;
-      mtype = FROM_MASTER;
-      for (dest=1; dest<=numworkers; dest++)
-      {
-         nRows = (dest <= extra) ? averow+1 : averow;
-         MPI_Send(&offset, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
-         MPI_Send(&nRows, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
+  		     nElements=nRows*COLA;
 
-		 nElements=nRows*COLA;
+  		     MPI_Send(&nElements, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
 
-		 MPI_Send(&nElements, 1, MPI_INT, dest, mtype, MPI_COMM_WORLD);
+           MPI_Send(&a[offset*COLA], nElements, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
 
-         MPI_Send(&a[offset*COLA], nElements, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
+           MPI_Send(b, COLA*COLB, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
+           offset = offset + nRows;
+        }
 
-         MPI_Send(b, COLA*COLB, MPI_DOUBLE, dest, mtype, MPI_COMM_WORLD);
-         offset = offset + nRows;
-}
-
-      /* Receive results from worker tasks */
-      mtype = FROM_WORKER;
-      for (i=1; i<=numworkers; i++)
-      {
-         source = i;
-         MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&nRows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
-         MPI_Recv(&c[offset*COLB], nRows*COLB, MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
+        /* Receive results from worker tasks */
+        mtype = FROM_WORKER;
+        for (i=1; i<=numworkers; i++)
+        {
+           source = i;
+           MPI_Recv(&offset, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
+           MPI_Recv(&nRows, 1, MPI_INT, source, mtype, MPI_COMM_WORLD, &status);
+           MPI_Recv(&c[offset*COLB], nRows*COLB, MPI_DOUBLE, source, mtype, MPI_COMM_WORLD, &status);
+        }
       }
-
       end = clock();
       mpi_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 
@@ -141,6 +152,7 @@ int main (int argc, char *argv[])
 	       }
       }
 	*/
+
       printf("\n******************************************************\n");
       if(CudaOrMPI == 0){
         printf("Tiempo suma matrices CUDA : %.10f\n", mpi_time);
@@ -155,9 +167,9 @@ int main (int argc, char *argv[])
         printf ("ERROR:  Failed Processing  .\n");
       }
 
-	free(a);
-	free(b);
-	free(c);
+  	free(a);
+  	free(b);
+  	free(c);
    }
 
 
