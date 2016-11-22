@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+//cuda = 0 MPI = 1
+#define CudaOrMPI 0
+
 #define ROWA 100
 #define COLA 100
 #define COLB 50
@@ -13,9 +16,7 @@
 void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B);
 
 void mpi_mult_matriz(double *a, double *b,double *c, int ARows,int ACols, int BCols){
-
 double multResult;
-
   for(int k=0;k<BCols;k++){
      for(int i=0;i<ARows;i++){
         multResult= 0;
@@ -25,6 +26,26 @@ double multResult;
         c[i*BCols+k]= multResult;
      }
   }
+}
+
+bool compare(double *MPI, double *CUDA, int rows, int cols) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      if (MPI[i * cols + j] != CUDA[i * cols + j])
+        return false;
+    }
+  }
+  return true;
+}
+
+bool compareTo(double *mat, int rows, int cols) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      if (mat[i * cols + j] != COLA)
+        return false;
+    }
+  }
+  return true;
 }
 
 
@@ -114,17 +135,26 @@ int main (int argc, char *argv[])
 
     //   Print results
       printf("******************************************************\n");
-      printf("Result Vector:\n");
-
       for (i=0; i<ROWA; i++)
       {
-	printf("\n");
-	for(j=0;j<COLB;j++){
+	     printf("\n");
+	     for(j=0;j<COLB;j++){
          printf(" %.2f ", c[(i*COLB)+j]);
-	}
+	       }
       }
       printf("\n******************************************************\n");
-      printf("Tiempo suma vectores MPI : %.10f\n", mpi_time);
+      if(CudaOrMPI == 0){
+        printf("Tiempo suma matrices CUDA : %.10f\n", mpi_time);
+      }else if(CudaOrMPI == 1){
+        printf("Tiempo suma matrices MPI : %.10f\n", mpi_time);
+      }else{
+        printf("Error funcion no definida \n");
+      }
+      if(compareTo(c,ROWA,COLB)){
+        printf (" == Successful Processing == \n");
+      }else{
+        printf ("ERROR:  Failed Processing  .\n");
+      }
       printf ("Done.\n");
 
 	free(a);
@@ -148,9 +178,14 @@ int main (int argc, char *argv[])
 
       MPI_Recv(matBuffA, nElements, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
        MPI_Recv(matBuffB, COLA*COLB, MPI_DOUBLE, MASTER, mtype, MPI_COMM_WORLD, &status);
-
-      //mpi_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
-      cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+      if(CudaOrMPI == 0){
+        cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+      }else if(CudaOrMPI == 1){
+        mpi_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+      }else{
+        printf("Error funcion no definida \n");
+      }
+      
 
        mtype = FROM_WORKER;
        MPI_Send(&offset, 1, MPI_INT, MASTER, mtype, MPI_COMM_WORLD);
