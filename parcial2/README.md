@@ -19,26 +19,26 @@ para la realizacion de este trabajo se debio investigar sobre como compilar ```C
   }
 
   ```
-  y la funcion de tipo void
-```
-  void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B){
-    ...
-    |
-    ...
-  }
+    y la funcion de tipo void
+  ```
+    void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B){
+      ...
+      |
+      ...
+    }
 
-  ```
+    ```
 
-  para el llamado en el archivo .c primero se le dice al compilador que se va usar esta funcion con la siguiente linea
+    para el llamado en el archivo .c primero se le dice al compilador que se va usar esta funcion con la siguiente linea
 
-  ```
-    void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B);
-  ```
+    ```
+      void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B);
+    ```
 
-  y despues se hace el llamado de la siguiente manera en cada worker o donde sea necesaria usarla
-  ```
-  cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
-  ```
+    y despues se hace el llamado de la siguiente manera en cada worker o donde sea necesaria usarla
+    ```
+    cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+    ```
 
 2. Se debe definir un archivo .sh para el proceso de compilacion, el cual debe contener las siquientes lineas:
 
