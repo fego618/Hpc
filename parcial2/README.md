@@ -82,7 +82,7 @@ para la realizacion de este trabajo se debio investigar sobre como compilar ```C
   ```
 
 
-
+## ANALISIS DE DATOS
 
 
 
