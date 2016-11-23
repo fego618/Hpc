@@ -84,7 +84,52 @@ para la realizacion de este trabajo se debio investigar sobre como compilar ```C
 
 ## ANALISIS DE DATOS
 
+### Tiempo de ejecucion utilizando un Nodo.
 
+|Tamaño de matrices|   GPU   |    CPU    |Aceleración|
+|------------------|---------|-----------|-----------|
+|12500             |35,641411|5481,517614|153,7963133|
+|10500             |21,434562|2609,043757|121,7213469|
+|8500              |11,573089|1552,982527|134,1891112|
+|6500              | 5,23061 |538,473535 |102,9466037|
+|4500              |1,835243 |191,818566 |104,5194375|
+|2500              |0,412166 | 24,211979 |58,74327092|
+#### Grafica de tiempos
+![alt tag](img/t1.PNG)
+#### Grafica del factor de aceleracion
+![alt tag](img/ac1.PNG)
+
+### Tiempo de ejecucion utilizando dos Nodo.
+
+|Tamaño de matrices|   GPU   |    CPU    |Aceleración|
+|------------------|---------|-----------|-----------|
+|13000             |74,650037|3958,268985|53,02434056|
+|11000             |49,62557 |1499,954044|30,22542701|
+|9000              |30,603564|686,930073 |22,44608089|
+|7000              |16,621691|293,377225 |17,65026344|
+|5000              |7,621721 |98,685564  |12,94793709|
+|3000              |2,480732 |21,726039  |8,757914599|
+
+#### Grafica de tiempos
+![alt tag](img/t2.PNG)
+#### Grafica del factor de aceleracion
+![alt tag](img/ac2.PNG)
+
+### Tiempo de ejecucion utilizando tres Nodos.
+
+|Tamaño de matrices|   GPU   |    CPU    |Aceleración|
+|------------------|---------|-----------|-----------|
+|14000             |73,143201|2934,73892 |54,11670437|
+|12000             |51,589732|1324,245601|29,07466245|
+|10000             |33,736139|743,626325 |20,36184618|
+|8000              |20,638844|669,679305 |14,21480898|
+|6000              |10,874133|140,301508 |9,075258138|
+|4000              |4,617811 |67,595382  |4,70483504|
+
+#### Grafica de tiempos
+![alt tag](img/t3.PNG)
+#### Grafica del factor de aceleracion
+![alt tag](img/ac3.PNG)
 
 ***
 ###### Farley Estiven Gonzalez Osorio
