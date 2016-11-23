@@ -80,7 +80,14 @@ para la realizacion de este trabajo se debio investigar sobre como compilar ```C
   ```
   sbatch mpi_mm.sh
   ```
+6. Para visualizar el resultado ejecutamos una de las siguientes lineas
 
+  ```
+  cat *.out
+  ```
+  ```
+  cat mpiWithCuda.out
+  ```
 
 ## ANALISIS DE DATOS
 
