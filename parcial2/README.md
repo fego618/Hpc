@@ -6,9 +6,41 @@ para posteriormente realizar un comparativo sobre los tiempos que nos arrojaban.
 
 para la realizacion de este trabajo se debio investigar sobre como compilar ```CUDA``` y ```MPI``` juntos, lo cual encontramos que se podia realizar mediante los siguientes pasos:
 
-1. Se deben crear dos archivos de codigo fuente diferentes, uno con extension ```.c``` donde se encuentre toda la implementacion sobre ```MPI``` y un llamado a una funcion de tipo void que sera definida en el archivo con extension ```.cu``` donde se encuentra el codigo de ```CUDA``` pere en este solo debe de estar el kernel y el codigo que va en el main en una funcion de tipo void.
+1. Se deben crear dos archivos de codigo fuente diferentes, uno con extension ```.c``` donde se encuentre toda la implementacion sobre ```MPI``` y un llamado a una funcion de tipo void que sera definida en el archivo con extension ```.cu``` donde se encuentra el codigo de ```CUDA``` pero en este solo debe de estar el kernel y el codigo que va en el main en una funcion de tipo void de esta manera:
 
-2. Se debe definir un archivo .sh para el proceso de compilacion el cual debe contener las siquientes lineas:
+  el kernel
+
+  ```
+
+  __global__ void kernelMultMat(double *d_a, double *d_b, double *d_c, int ROWS, int COL_A, int COL_B) {
+    ...
+    |
+    ...
+  }
+
+  ```
+  y la funcion de tipo void
+```
+  void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B){
+    ...
+    |
+    ...
+  }
+
+  ```
+
+  para el llamado en el archivo .c primero se le dice al compilador que se va usar esta funcion con la siguiente linea
+
+  ```
+    void cuda_mult_matriz(double *h_a,double *h_b, double *h_c,int ROWS, int COL_A, int COL_B);
+  ```
+
+  y despues se hace el llamado de la siguiente manera en cada worker o donde sea necesaria usarla
+  ```
+  cuda_mult_matriz(matBuffA,matBuffB,matBuffC,nRows,COLA,COLB);
+  ```
+
+2. Se debe definir un archivo .sh para el proceso de compilacion, el cual debe contener las siquientes lineas:
 
     ```
     mpic++ -c mpi_mult_matriz.c -o mpi_mult_matriz.o
@@ -38,6 +70,17 @@ para la realizacion de este trabajo se debio investigar sobre como compilar ```C
   export CUDA_VISIBLE_DEVICES=0
   mpirun mpiWithCuda_mm
   ```
+4. se ejecuta el siguiente comando para compilar lo especificado en el archivo compile.sh
+
+  ```
+  sh compile.sh
+  ```
+5. ahora con la siguiente linea le decimos al scheduler que distribuya el trabajo segun las configuraciones descritas en el archivo de ejecucion que en nuestro caso se llamo mpi_mm.sh
+
+  ```
+  sbatch mpi_mm.sh
+  ```
+
 
 
 
